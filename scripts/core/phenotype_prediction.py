@@ -12,8 +12,8 @@ def get_ancestor_phenotype_state_dict(samples_phenotype_file, state):
     return group_state, phenotype_state_dict
 
 
-def get_genotype_list(samples_genotype_file, ancestor_phenotype_file):
-    genotype_list = {}
+def get_genotype_dict(samples_genotype_file, ancestor_phenotype_file):
+    genotype_dict = {}
     with open(samples_genotype_file) as f_in_geno, open(ancestor_phenotype_file) as f_anc_geno:
         union_genotype = f_in_geno.readlines() + f_anc_geno.readlines()
         lines_without_spaces = filter(None, (line.strip() for line in union_genotype))
@@ -21,8 +21,8 @@ def get_genotype_list(samples_genotype_file, ancestor_phenotype_file):
             row = line.split()
             id = row[0]
             sequence = row[1]
-            genotype_list[id] = sequence
-    return genotype_list
+            genotype_dict[id] = sequence
+    return genotype_dict
 
 
 def count_sequence_distance(sequence_1, sequence_2):
@@ -53,29 +53,29 @@ def get_ancestor_phenotype(tree, genotype, phenotype):
     return ancestor_phenotype
 
 
-def get_phenotype_all_nodes(tree_nh, phylo_phy, anc_phy, in_R_states, in_S_states):
+def get_phenotype_all_nodes(tree_nh, phylip_in, anc_phy, in_R_states, in_S_states):
     in_R_phenotype = open('positive_phenotype.txt', "w")
     in_S_phenotype = open('negative_phenotype.txt', "w")
     tree = Tree(tree_nh, format=1)
-    genotype = get_genotype_list(phylo_phy, anc_phy)
+    genotype = get_genotype_dict(phylip_in, anc_phy)
     name_of_R, phenotype = get_ancestor_phenotype_state_dict(in_R_states, "R")
     name_of_S, phenotype_S = get_ancestor_phenotype_state_dict(in_S_states, "S")
     phenotype.update(phenotype_S)
     ancestor_phenotype = get_ancestor_phenotype(tree, genotype, phenotype)
-    negative_phenotype_all_nodes = name_of_S + ancestor_phenotype['S']
-    positive_phenotype_all_nodes = name_of_R + ancestor_phenotype['R']
-    in_S_phenotype.write('\n'.join(negative_phenotype_all_nodes))
-    in_R_phenotype.writelines('\n'.join(positive_phenotype_all_nodes))
-    return negative_phenotype_all_nodes, positive_phenotype_all_nodes
+    name_of_ancestral_S = name_of_S + ancestor_phenotype['S']
+    name_of_ancestral_R = name_of_R + ancestor_phenotype['R']
+    in_S_phenotype.write('\n'.join(name_of_ancestral_S))
+    in_R_phenotype.writelines('\n'.join(name_of_ancestral_R))
+    return name_of_R, name_of_S, name_of_ancestral_S, name_of_ancestral_R
 
 
 if __name__ == '__main__':
     in_R_states = './phyc_test/input/R_states'
     in_S_states = './phyc_test/input/S_states'
-    phylo_phy = './phyc_test/input/farhat.phy'
+    phylip_in = './phyc_test/input/farhat.phy'
     tree_nh = './phyc_test/input/raxml_tree.nh'
     anc_phy = './phyc_test/input/raxml/RAxML_marginalAncestralStates.nh'
-    get_phenotype_all_nodes(tree_nh, phylo_phy, anc_phy, in_R_states, in_S_states)
+    get_phenotype_all_nodes(tree_nh, phylip_in, anc_phy, in_R_states, in_S_states)
 
 
 
