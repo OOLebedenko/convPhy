@@ -54,8 +54,6 @@ def get_ancestor_phenotype(tree, genotype, phenotype):
 
 
 def get_phenotype_all_nodes(tree_nh, phylip_in, anc_phy, in_R_states, in_S_states):
-    in_R_phenotype = open('positive_phenotype.txt', "w")
-    in_S_phenotype = open('negative_phenotype.txt', "w")
     tree = Tree(tree_nh, format=1)
     genotype = get_genotype_dict(phylip_in, anc_phy)
     name_of_R, phenotype = get_ancestor_phenotype_state_dict(in_R_states, "R")
@@ -64,18 +62,4 @@ def get_phenotype_all_nodes(tree_nh, phylip_in, anc_phy, in_R_states, in_S_state
     ancestor_phenotype = get_ancestor_phenotype(tree, genotype, phenotype)
     name_of_ancestral_S = name_of_S + ancestor_phenotype['S']
     name_of_ancestral_R = name_of_R + ancestor_phenotype['R']
-    in_S_phenotype.write('\n'.join(name_of_ancestral_S))
-    in_R_phenotype.writelines('\n'.join(name_of_ancestral_R))
-    return name_of_R, name_of_S, name_of_ancestral_S, name_of_ancestral_R
-
-
-if __name__ == '__main__':
-    in_R_states = './phyc_test/input/R_states'
-    in_S_states = './phyc_test/input/S_states'
-    phylip_in = './phyc_test/input/farhat.phy'
-    tree_nh = './phyc_test/input/raxml_tree.nh'
-    anc_phy = './phyc_test/input/raxml/RAxML_marginalAncestralStates.nh'
-    get_phenotype_all_nodes(tree_nh, phylip_in, anc_phy, in_R_states, in_S_states)
-
-
-
+    return name_of_R, name_of_S, name_of_ancestral_S, name_of_ancestral_R, genotype

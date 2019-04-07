@@ -1,7 +1,8 @@
+# -*- coding: utf-8 -*-
 import subprocess
 import os
 from scripts.core.phenotype_prediction import get_phenotype_all_nodes
-
+from scripts.core.phyc import phyc
 
 # Подготовка файлов и запуск raxml
 def run_raxml(out_dir, raxml_in, phylip_in):
@@ -15,19 +16,28 @@ def run_raxml(out_dir, raxml_in, phylip_in):
 
 # Подготовка файлов и запуск phenotype_prediction.py
 def run_phenotype_prediction(out_dir, raxml_in, phylip_in, path_to_anc_phy, R_in, S_in):
-    out_dir_pheno = out_dir + "/phenotype_prediction/"
+    out_dir_pheno = os.path.join(out_dir, "phenotype_prediction")
+    in_R_phenotype = open(os.path.join(out_dir_pheno, 'positive_phenotype.txt'), "w")
+    in_S_phenotype = open(os.path.join(out_dir_pheno, 'negative_phenotype.txt'), "w")
     os.makedirs(out_dir_pheno, exist_ok=True)
-    #os.chdir(out_dir_pheno)
-    negative_phenotype_all_nodes, positive_phenotype_all_nodes = \
+    os.chdir(out_dir_pheno)
+    name_of_R, name_of_S, names_of_ancestral_S, names_of_ancestral_R, genotype = \
         get_phenotype_all_nodes(raxml_in, phylip_in, path_to_anc_phy, R_in, S_in)
-    return  negative_phenotype_all_nodes, positive_phenotype_all_nodes
+    in_S_phenotype.write('\n'.join(name_of_S + names_of_ancestral_S))
+    in_R_phenotype.writelines('\n'.join(name_of_R + names_of_ancestral_R))
+    return  name_of_R, name_of_S, names_of_ancestral_S, names_of_ancestral_R, genotype
 
 
 # Подготовка файлов и запуск phyC
-
+def run_phyc(out_dir,name_of_R, name_of_S, names_of_ancestral_S,
+             names_of_ancestral_R, info_pos, raxml_in, genotype):
+    out_dir_phyc = os.path.join(out_dir, "phyc")
+    os.makedirs(out_dir_phyc, exist_ok=True)
+    os.chdir(out_dir_phyc)
+    phyc(name_of_R, name_of_S, names_of_ancestral_S,
+         names_of_ancestral_R, info_pos, raxml_in, genotype)
 #
 # out_dir_phyc = out_dir + "phyc/"
-# if not os.path.exists(out_dir_phyc):
 #     os.makedirs(out_dir_phyc)
 #
 # os.chdir(out_dir_phyc)
