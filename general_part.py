@@ -9,30 +9,27 @@ parser.add_argument("-o", "--out_dir", default="./output_phyc/", help="path to d
 args = parser.parse_args()
 # входные файлы
 run_dir = os.path.join(os.path.abspath(args.input))
-os.chdir(run_dir)
-
-info_pos = run_dir + "info_pos.txt"
-SNPs_in = run_dir + 'SNPs.txt'
-#phylip_in = run_dir + "farhat.phy"
-phylip_in = './phyc_test/input/farhat.phy'
-#raxml_in = run_dir + "raxml_tree.nh"
-raxml_in = './phyc_test/input/raxml_tree.nh'
-# S_in = run_dir + "S_states"
-# R_in = run_dir + "R_states"
-R_in = './phyc_test/input/R_states'
-S_in = './phyc_test/input/S_states'
-
-# тестируемые позиции в геноме
-#pos = map(lambda line: int(line.strip().split("\t")[0]), open(info_pos))
-
 # выходные файлы
 out_dir =os.path.join(os.path.abspath(args.out_dir))
 os.makedirs(out_dir, exist_ok=True)
 
+os.chdir(run_dir)
+info_pos = os.path.join(run_dir, "info_pos.txt")
+SNPs_in = os.path.join(run_dir, 'SNPs.txt')
+phylip_in = os.path.join(run_dir, 'farhat.phy')
+raxml_in = os.path.join(run_dir, "raxml_tree.nh")
+R_in = os.path.join(run_dir, 'R_states')
+S_in = os.path.join(run_dir, 'S_states')
+
+# тестируемые позиции в геноме
+#pos = map(lambda line: int(line.strip().split("\t")[0]), open(info_pos))
+
 # Подготовка файлов и запуск raxml
 #path_to_anc_phy = run_raxml(out_dir, raxml_in, phylip_in)
+path_to_anc_phy = os.path.join(out_dir, 'raxml', 'RAxML_marginalAncestralStates.nh')
 
 # Подготовка файлов и запуск phenotype_prediction.py
-path_to_anc_phy = './phyc_test/input/raxml/RAxML_marginalAncestralStates.nh'
-run_phenotype_prediction(os.getcwd(), raxml_in, phylip_in, path_to_anc_phy, R_in, S_in)
+negative_phenotype_all_nodes, positive_phenotype_all_nodes = \
+    run_phenotype_prediction(os.getcwd(), raxml_in, phylip_in, path_to_anc_phy, R_in, S_in)
+
 
