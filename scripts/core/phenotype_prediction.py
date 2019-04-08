@@ -1,4 +1,5 @@
 from ete3 import Tree
+from tqdm import tqdm
 
 
 def get_ancestor_phenotype_state_dict(samples_phenotype_file, state):
@@ -38,11 +39,10 @@ def get_ancestor_phenotype(tree, genotype, phenotype):
     ancestor_phenotype['R'] = []
     ancestor_phenotype['S'] = []
     pair_nodes = tree.get_tree_root().get_descendants(strategy="levelorder")
-    for i in range(-1, -len(pair_nodes) + 2, -2):
+    for i in tqdm(range(-1, -len(pair_nodes) + 2, -2), desc="run phenotype prediction"):
         nodei = pair_nodes[i]
         nodej = pair_nodes[i - 1]
         anc = nodei.up.name
-        print(anc)
         if count_sequence_distance(genotype[nodei.name], genotype[anc]) < \
                 count_sequence_distance(genotype[nodej.name], genotype[anc]):
             ancestor_phenotype[phenotype[nodei.name]].append(anc)

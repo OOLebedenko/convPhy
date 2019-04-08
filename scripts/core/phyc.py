@@ -1,6 +1,6 @@
-import os
 from ete3 import Tree
 from collections import defaultdict
+from tqdm import tqdm
 
 
 def _prepare_pos(info_pos):
@@ -54,8 +54,7 @@ def phyc(name_of_R, name_of_S, names_of_ancestral_S, names_of_ancestral_R, info_
     S_INFO_POS = _prepare_structure(name_of_S, genotype, SNPs)
     ancestral_INFO_POS = _prepare_structure(names_of_ancestral, genotype, SNPs, True)
     R_S = []
-    for point in range(len(pos)):
-        print(point)
+    for point in tqdm(range(len(pos)), desc="phyc run"):
         R1, S1 = traverse(R_INFO_POS, ancestral_INFO_POS, names_of_ancestral_R, tree, point, SNPs[point])
         R2, S2 = traverse(S_INFO_POS, ancestral_INFO_POS, names_of_ancestral_R, tree, point, SNPs[point])
         resistant_branches = len(set(R1 + R2))
