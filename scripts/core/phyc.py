@@ -40,9 +40,9 @@ def traverse(leaves_INFO_POS, ancestral_INFO_POS, names_of_ancestral_R, tree, po
             R_list.append(node.name)
         else:
             S_list.append(node.name)
-    l1 = R_list
-    l2 = S_list
-    return l1, l2
+    resistant_branches = R_list
+    sensitive_branches = S_list
+    return resistant_branches, sensitive_branches
 
 
 def phyc(name_of_R, name_of_S, names_of_ancestral_S, names_of_ancestral_R, info_pos, raxml_in, genotype):
@@ -53,11 +53,14 @@ def phyc(name_of_R, name_of_S, names_of_ancestral_S, names_of_ancestral_R, info_
     R_INFO_POS = _prepare_structure(name_of_R, genotype, SNPs)
     S_INFO_POS = _prepare_structure(name_of_S, genotype, SNPs)
     ancestral_INFO_POS = _prepare_structure(names_of_ancestral, genotype, SNPs, True)
-
+    R_S = []
     for point in range(len(pos)):
         print(point)
         R1, S1 = traverse(R_INFO_POS, ancestral_INFO_POS, names_of_ancestral_R, tree, point, SNPs[point])
         R2, S2 = traverse(S_INFO_POS, ancestral_INFO_POS, names_of_ancestral_R, tree, point, SNPs[point])
-        l1 = len(set(R1 + R2))
-        l2 = len(set(S1 + S2))
-        resistant_branch.write(str(point) + "\t" + str(l1) + "\t" + str(l2) + "\n")
+        resistant_branches = len(set(R1 + R2))
+        sensitive_branches = len(set(S1 + S2))
+        R_S.append([point, resistant_branches, sensitive_branches])
+        resistant_branch.write(str(point) + "\t" + str(resistant_branches) + "\t"
+                               + str(sensitive_branches) + "\n")
+    return R_S

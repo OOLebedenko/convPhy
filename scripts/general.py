@@ -3,6 +3,8 @@ import subprocess
 import os
 from scripts.core.phenotype_prediction import get_phenotype_all_nodes
 from scripts.core.phyc import phyc
+from scripts.core.p_value import get_p_value
+
 
 # Подготовка файлов и запуск raxml
 def run_raxml(out_dir, raxml_in, phylip_in):
@@ -34,51 +36,24 @@ def run_phyc(out_dir,name_of_R, name_of_S, names_of_ancestral_S,
     out_dir_phyc = os.path.join(out_dir, "phyc")
     os.makedirs(out_dir_phyc, exist_ok=True)
     os.chdir(out_dir_phyc)
-    phyc(name_of_R, name_of_S, names_of_ancestral_S,
+    R_S = phyc(name_of_R, name_of_S, names_of_ancestral_S,
          names_of_ancestral_R, info_pos, raxml_in, genotype)
-#
-# out_dir_phyc = out_dir + "phyc/"
-#     os.makedirs(out_dir_phyc)
-#
-# os.chdir(out_dir_phyc)
-#
-# if not os.path.exists("./input"):
-#     os.makedirs("./input")
-# if not os.path.exists("./output"):
-#     os.makedirs("./output")
-# os.chdir("./input")
-#
-# shutil.copy('../../phenotype_prediction/positive_phenotype.txt', './positive_phenotype.txt')
-# shutil.copy('../../phenotype_prediction/negative_phenotype.txt', './negative_phenotype.txt')
-# shutil.copy('../../raxml/RAxML_marginalAncestralStates.nh', './ancestral.txt')
-#
-# shutil.copy(phylip_in, './farhat.phy')
-# shutil.copy(raxml_node_labeled_in, 'RAxML_nodeLabelledRootedTree.nh')
-# os.rename("RAxML_nodeLabelledRootedTree.nh", "raxml_tree.nh")
-#
-# os.chdir(out_dir_phyc)
-#
-# in_R_phenotype = './input/positive_phenotype.txt'
-# in_S_phenotype = './input/negative_phenotype.txt'
-#
-# core.phyc.phyc(pos, SNPs_in, in_R_phenotype, in_S_phenotype, R_in, S_in, phylip_in)
-#
-# # Подготовка файлов и запуск p_value
-#
-# logger.info("Preparing of input files and output directory for pvalue run")
-# out_dir_p_value = out_dir + "/p_value/"
-# if not os.path.exists(out_dir_p_value):
-#     os.makedirs(out_dir_p_value)
-#
-# os.chdir(out_dir_p_value)
-# in_pos = out_dir_phyc + "output/pos.txt"
-# info_pos = run_dir + "info_pos.txt"
-# core.pval.pval(in_pos, info_pos)
-#
+    return R_S
+
+#Подготовка файлов и запуск p_value
+def run_p_value(out_dir, R_S, info_pos):
+    out_dir_p_value = os.path.join(out_dir,"p_value")
+    os.makedirs(out_dir_p_value, exist_ok=True)
+    os.chdir(out_dir_p_value)
+    p_value = './p_value.txt'
+    p_val = get_p_value(R_S, info_pos)
+    with open(p_value, "w") as f_out:
+        f_out.writelines(p_val)
+
+
 # # Аннотация ОНП
 #
 #
 # snps_path = out_dir_p_value + "p_value.txt"
 # annotation.snps_annotation.snps_ann(snps_path)
 #
-# # '/home/mrotkevich/Data/Spondilit/filter_final'
