@@ -19,4 +19,3 @@ def get_p_value(R_S, info_pos, n=1000):
             index = real[0]
             p_value.append(str(index) + "\t" + str(info_pos[int(index)]) + "\t" + str(p) + "\n")
     return (p_value)
-
