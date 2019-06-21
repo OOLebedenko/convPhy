@@ -43,13 +43,14 @@ def get_ancestor_phenotype(tree, genotype, phenotype):
         nodei = pair_nodes[i]
         nodej = pair_nodes[i - 1]
         anc = nodei.up.name
-        if count_sequence_distance(genotype[nodei.name], genotype[anc]) < \
-                count_sequence_distance(genotype[nodej.name], genotype[anc]):
-            ancestor_phenotype[phenotype[nodei.name]].append(anc)
-            phenotype[anc] = phenotype[nodei.name]
-        else:
-            ancestor_phenotype[phenotype[nodej.name]].append(anc)
-            phenotype[anc] = phenotype[nodej.name]
+        if nodei.name in phenotype.keys() and nodej.name in phenotype.keys():
+            if count_sequence_distance(genotype[nodei.name], genotype[anc]) < \
+                    count_sequence_distance(genotype[nodej.name], genotype[anc]):
+                ancestor_phenotype[phenotype[nodei.name]].append(anc)
+                phenotype[anc] = phenotype[nodei.name]
+            else:
+                ancestor_phenotype[phenotype[nodej.name]].append(anc)
+                phenotype[anc] = phenotype[nodej.name]
     return ancestor_phenotype
 
 

@@ -2,11 +2,12 @@ import numpy as np
 from tqdm import tqdm
 
 
-def get_p_value(R_S, info_pos, n=10000):
+def get_p_value(R_S, info_pos, n=1000):
     p_value = []
     with open(info_pos) as file:
         info_pos = [line.strip() for line in file.readlines()]
     for ind, real in tqdm(enumerate(R_S), desc="run p_value)"):
+        print(ind)
         counter = 0
         for i in range(n):
             point = np.random.randint(len(R_S))
@@ -18,4 +19,3 @@ def get_p_value(R_S, info_pos, n=10000):
             index = real[0]
             p_value.append(str(index) + "\t" + str(info_pos[int(index)]) + "\t" + str(p) + "\n")
     return (p_value)
-
