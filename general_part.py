@@ -56,12 +56,12 @@ with open(path_to_R_S) as f_in:
     R_S = [line.strip().split() for line in f_in]
 
 # Подготовка файлов и запуск p_value
-out_dir = os.path.join(args.out_dir, "p_value")
 if not args.p_value:
+    out_dir = os.path.join(args.out_dir, "p_value")
     run_p_value(out_dir, R_S, info_pos)
 
 # Аннотация ОНП
 
-snps_path = os.path.join(args.out_dir, "p_value", "p_value.txt")
-path_to_snps_out_csv = os.path.join(args.out_dir, "p_value", "annotated_snps.csv")
+snps_path = os.path.join(out_dir, "p_value", "p_value.txt")
+path_to_snps_out_csv = os.path.join(out_dir, "p_value","annotated_snps.csv")
 annotate_snp(snps_path, path_to_snps_out_csv)
