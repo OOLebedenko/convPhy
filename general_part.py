@@ -51,15 +51,13 @@ if not args.conphy:
     run_phyc(out_dir, name_of_R, name_of_S, ancestor_S_phenotype,
              ancestor_R_phenotype, info_pos, genotype_dict)
 
-path_to_R_S = os.path.join(out_dir, "phyc", 'positive_phenotype.txt')
+path_to_R_S = os.path.join(out_dir, "phyc", 'pos.txt')
 with open(path_to_R_S) as f_in:
     R_S = [line.strip().split() for line in f_in]
 
 # Подготовка файлов и запуск p_value
 out_dir = os.path.join(args.out_dir, "p_value")
-if not args.p_vaue:
-    with open(os.path.join(args.out_dir, "phyc", "pos.txt")) as f_in:
-        R_S = [line.strip().split() for line in f_in]
+if not args.p_value:
     run_p_value(out_dir, R_S, info_pos)
 
 # Аннотация ОНП
