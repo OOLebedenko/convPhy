@@ -30,7 +30,7 @@ os.chdir(run_dir)
 
 # run genotype prediction
 if not args.genotype_prediction:
-    path_to_ancestor_phylip = run_raxml(out_dir, raxml_in, phylip_in)
+    run_raxml(out_dir, raxml_in, phylip_in)
 path_to_ancestor_phylip = os.path.join(out_dir, 'raxml', 'RAxML_marginalAncestralStates.nh')
 
 # run phenotype prediction
