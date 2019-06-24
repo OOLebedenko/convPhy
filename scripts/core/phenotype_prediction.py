@@ -54,13 +54,13 @@ def get_ancestor_phenotype(tree, genotype, phenotype):
     return ancestor_phenotype
 
 
-def get_phenotype_all_nodes(tree_nh, phylip_in, anc_phy, in_R_states, in_S_states):
+def get_phenotype_all_nodes(tree_nh, phylip_in, anc_phy, R_in, S_in):
     tree = Tree(tree_nh, format=1)
-    genotype = get_genotype_dict(phylip_in, anc_phy)
-    name_of_R, phenotype = get_ancestor_phenotype_state_dict(in_R_states, "R")
-    name_of_S, phenotype_S = get_ancestor_phenotype_state_dict(in_S_states, "S")
+    genotype_dict = get_genotype_dict(phylip_in, anc_phy)
+    name_of_R, phenotype = get_ancestor_phenotype_state_dict(R_in, "R")
+    name_of_S, phenotype_S = get_ancestor_phenotype_state_dict(S_in, "S")
     phenotype.update(phenotype_S)
-    ancestor_phenotype = get_ancestor_phenotype(tree, genotype, phenotype)
-    name_of_ancestral_S = name_of_S + ancestor_phenotype['S']
-    name_of_ancestral_R = name_of_R + ancestor_phenotype['R']
-    return name_of_R, name_of_S, name_of_ancestral_S, name_of_ancestral_R, genotype
+    ancestor_phenotype = get_ancestor_phenotype(tree, genotype_dict, phenotype)
+    name_of_all_S = name_of_S + ancestor_phenotype['S']
+    name_of_all_R = name_of_R + ancestor_phenotype['R']
+    return name_of_R, name_of_S, name_of_all_S, name_of_all_R
