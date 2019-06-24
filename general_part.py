@@ -47,7 +47,7 @@ with open(path_to_ancestor_S_phenotype) as anc_S, open(path_to_ancestor_R_phenot
 genotype_dict = get_genotype_dict(phylip_in, path_to_ancestor_phylip)
 
 # Подготовка файлов и запуск phyC
-if not args.phyc:
+if not args.conphy:
     run_phyc(out_dir, name_of_R, name_of_S, ancestor_S_phenotype,
              ancestor_R_phenotype, info_pos, genotype_dict)
 
