@@ -28,7 +28,7 @@ os.makedirs(out_dir, exist_ok=True)
 os.chdir(run_dir)
 
 # Подготовка файлов и запуск raxml
-if not args.enotype_prediction:
+if not args.genotype_prediction:
     path_to_anc_phy = run_raxml(out_dir, raxml_in, phylip_in)
 path_to_anc_phy = os.path.join(out_dir, 'raxml', 'RAxML_marginalAncestralStates.nh')
 
