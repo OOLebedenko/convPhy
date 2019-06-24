@@ -28,12 +28,12 @@ os.makedirs(out_dir, exist_ok=True)
 os.chdir(run_dir)
 
 # Подготовка файлов и запуск raxml
-if not args.geno:
+if not args.enotype_prediction:
     path_to_anc_phy = run_raxml(out_dir, raxml_in, phylip_in)
 path_to_anc_phy = os.path.join(out_dir, 'raxml', 'RAxML_marginalAncestralStates.nh')
 
 # Подготовка файлов и запуск phenotype_prediction.py
-if not args.pheno:
+if not args.phenotype_prediction:
     run_phenotype_prediction(out_dir, phylip_in, path_to_anc_phy, R_in, S_in)
 
 with open(in_S_states) as children_S, open(in_R_states) as children_R:
