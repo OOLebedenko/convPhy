@@ -12,17 +12,34 @@ parser.add_argument("-geno", "--genotype_prediction", default=False, type=bool)
 parser.add_argument("-pheno", "--phenotype_prediction", default=False, type=bool)
 parser.add_argument("-convphy", default=False, type=bool)
 parser.add_argument("-p_value", default=False, type=bool)
+parser.add_argument("-neg", "--negative_phenotype", type=str)
+parser.add_argument("-pos", "--positive_phenotype", type=str)
+#parser.add_argument("-ref", default=False, type=str, help="path to reference genbank file to make an annotation of variants" )
 
 args = parser.parse_args()
-
+#print (args)
 # input files
 run_dir = os.path.join(os.path.abspath(args.input))
 info_pos = os.path.join(run_dir, "info_pos.txt")
 SNPs_in = os.path.join(run_dir, 'SNPs.txt')
 phylip_in = os.path.join(run_dir, 'farhat.phy')
 raxml_in = os.path.join(run_dir, "raxml_tree.nh")
-R_in = os.path.join(run_dir, 'R_states')
-S_in = os.path.join(run_dir, 'S_states')
+
+if args.negative_phenotype:
+	S_in = os.path.join(run_dir, args.negative_phenotype)
+else:
+	S_in = os.path.join(run_dir, "S_states.txt")
+if args.positive_phenotype:
+	R_in = os.path.join(run_dir, args.positive_phenotype)
+else:
+	R_in = os.path.join(run_dir, "R_states.txt")
+
+# check input files existance
+for filepath in [info_pos,SNPs_in,phylip_in, raxml_in, R_in,S_in]: 
+	if not os.path.isfile(filepath):
+		print ("Error! File '%s', which is necessary for executing, doesn't exist!" % filepath)
+		raise SystemExit(0)
+
 
 # output files
 out_dir = os.path.join(os.path.abspath(args.out_dir))
@@ -61,4 +78,4 @@ if not args.p_value:
 # annotation SNPs
 snps_path = os.path.join(out_dir, "p_value", "p_value.txt")
 path_to_snps_out_csv = os.path.join(out_dir, "p_value", "annotated_snps.csv")
-annotate_snp(snps_path, path_to_snps_out_csv)
+#annotate_snp(snps_path, path_to_snps_out_csv, args.ref)
