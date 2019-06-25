@@ -6,8 +6,7 @@ from Bio import SeqIO
 import Bio.Data.CodonTable
 from Bio import SeqIO
 
-path_to_genbank = "/home/olebedenko/mtb_ref/sequence.gb"
-gb_record = SeqIO.read(open(path_to_genbank, "r"), "genbank")
+#path_to_genbank = "/home/olebedenko/mtb_ref/sequence.gb"
 
 
 def annotate_snp(snps_path, path_to_snps_out_csv):
@@ -174,9 +173,11 @@ def annotate(gb_record, ref, position, alt):
             break
     if flag == 0:
         return {'ref': ref, 'alt': alt, 'position': position, 'effect': 'intergenic'}
-
-# if __name__ == '__main__':
-# 	path_to_genbank="/home/olebedenko/mtb_ref/sequence.gb"
+#
+#if __name__ == '__main__':
+#
+#
+#	path_to_genbank="/home/olebedenko/mtb_ref/sequence.gb"
 # 	gb_record = SeqIO.read(open(path_to_genbank,"r"), "genbank")
 # 	print annotate(gb_record, "C",2155168,"G")
 
