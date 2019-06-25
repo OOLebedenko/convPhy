@@ -37,6 +37,8 @@ path_to_ancestor_phylip = os.path.join(out_dir, 'raxml', 'RAxML_marginalAncestra
 if not args.phenotype_prediction:
     run_phenotype_prediction(out_dir, phylip_in, path_to_ancestor_phylip, R_in, S_in)
 
+path_to_ancestor_S_phenotype = os.path.join(out_dir, "phenotype_prediction", 'negative_phenotype.txt')
+path_to_ancestor_R_phenotype = os.path.join(out_dir, "phenotype_prediction", 'positive_phenotype.txt')
 with open(S_in) as children_S, open(R_in) as children_R, \
      open(path_to_ancestor_S_phenotype) as anc_S, open(path_to_ancestor_R_phenotype) as anc_R:    
     name_of_S = [line.strip() for line in children_S]
@@ -44,8 +46,6 @@ with open(S_in) as children_S, open(R_in) as children_R, \
     ancestor_S_phenotype = [line.strip() for line in anc_S]
     ancestor_R_phenotype = [line.strip() for line in anc_R]
 
-path_to_ancestor_S_phenotype = os.path.join(out_dir, "phenotype_prediction", 'negative_phenotype.txt')
-path_to_ancestor_R_phenotype = os.path.join(out_dir, "phenotype_prediction", 'positive_phenotype.txt')
 genotype_dict = get_genotype_dict(phylip_in, path_to_ancestor_phylip)
 
 # run convPhy

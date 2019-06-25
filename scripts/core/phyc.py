@@ -58,6 +58,6 @@ def phyc(name_of_R, name_of_S, names_of_ancestral_S, names_of_ancestral_R, info_
         R2, S2 = traverse(S_INFO_POS, ancestral_INFO_POS, names_of_ancestral_R, tree, point, SNPs[point])
         resistant_branches = len(set(R1 + R2))
         sensitive_branches = len(set(S1 + S2))
-        R_S.append([str(point) + "\t", str(resistant_branches) + "\t",
-                    str(sensitive_branches) + "\n"])
+        R_S.append(str(point) + "\t" + str(resistant_branches) + "\t" +
+                    str(sensitive_branches) + "\n")
     return R_S
