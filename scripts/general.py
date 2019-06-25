@@ -5,6 +5,14 @@ from scripts.core.phyc import phyc
 from scripts.core.p_value import get_p_value
 
 
+def read_file_by_line(path_to_file, split_by_any_space_separater=False):
+    with open(path_to_file) as f_in:
+        if split_by_any_space_separater:
+            out_list = [line.strip().split() for line in f_in]
+        else:
+            out_list = [line.strip() for line in f_in]
+    return out_list
+
 def run_raxml(out_dir, raxml_in, phylip_in):
     out_dir_raxml = os.path.join(os.path.abspath(out_dir), "raxml")
     os.makedirs(out_dir_raxml, exist_ok=True)

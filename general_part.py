@@ -1,6 +1,6 @@
 import argparse
+import os
 from scripts.general import *
-from scripts.core.phyc import *
 from scripts.core.phenotype_prediction import get_genotype_dict
 from scripts.annotation.annotate_snp import annotate_snp
 
@@ -39,13 +39,10 @@ if not args.phenotype_prediction:
 
 path_to_ancestor_S_phenotype = os.path.join(out_dir, "phenotype_prediction", 'negative_phenotype.txt')
 path_to_ancestor_R_phenotype = os.path.join(out_dir, "phenotype_prediction", 'positive_phenotype.txt')
-with open(S_in) as children_S, open(R_in) as children_R, \
-     open(path_to_ancestor_S_phenotype) as anc_S, open(path_to_ancestor_R_phenotype) as anc_R:    
-    name_of_S = [line.strip() for line in children_S]
-    name_of_R = [line.strip() for line in children_R]
-    ancestor_S_phenotype = [line.strip() for line in anc_S]
-    ancestor_R_phenotype = [line.strip() for line in anc_R]
-
+name_of_S = read_file_by_line(S_in)
+name_of_R = read_file_by_line(R_in)
+ancestor_S_phenotype = read_file_by_line(path_to_ancestor_S_phenotype)
+ancestor_R_phenotype = read_file_by_line(path_to_ancestor_R_phenotype)
 genotype_dict = get_genotype_dict(phylip_in, path_to_ancestor_phylip)
 
 # run convPhy
@@ -54,8 +51,7 @@ if not args.conphy:
              ancestor_R_phenotype, info_pos, genotype_dict)
 
 path_to_R_S = os.path.join(out_dir, "phyc", 'pos.txt')
-with open(path_to_R_S) as f_in:
-    R_S = [line.strip().split() for line in f_in]
+R_S = read_file_by_line(path_to_R_S, split_by_any_space_separater=True)
 
 # run permutation test
 if not args.p_value:
@@ -64,5 +60,5 @@ if not args.p_value:
 
 # annotation SNPs
 snps_path = os.path.join(out_dir, "p_value", "p_value.txt")
-path_to_snps_out_csv = os.path.join(out_dir, "p_value","annotated_snps.csv")
+path_to_snps_out_csv = os.path.join(out_dir, "p_value", "annotated_snps.csv")
 annotate_snp(snps_path, path_to_snps_out_csv)
