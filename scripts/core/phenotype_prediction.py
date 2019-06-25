@@ -13,9 +13,9 @@ def get_ancestor_phenotype_state_dict(samples_phenotype_file, state):
     return group_state, phenotype_state_dict
 
 
-def get_genotype_dict(samples_genotype_file, ancestor_phenotype_file):
+def get_genotype_dict(samples_genotype_file, path_to_ancestor_phylip):
     genotype_dict = {}
-    with open(samples_genotype_file) as f_in_geno, open(ancestor_phenotype_file) as f_anc_geno:
+    with open(samples_genotype_file) as f_in_geno, open(path_to_ancestor_phylip) as f_anc_geno:
         union_genotype = f_in_geno.readlines() + f_anc_geno.readlines()
         lines_without_spaces = filter(None, (line.strip() for line in union_genotype))
         for line in lines_without_spaces:
@@ -54,13 +54,13 @@ def get_ancestor_phenotype(tree, genotype, phenotype):
     return ancestor_phenotype
 
 
-def get_phenotype_all_nodes(tree_nh, phylip_in, anc_phy, in_R_states, in_S_states):
+def get_phenotype_all_nodes(tree_nh, phylip_in, path_to_ancestor_phylip, R_in, S_in):
     tree = Tree(tree_nh, format=1)
-    genotype = get_genotype_dict(phylip_in, anc_phy)
-    name_of_R, phenotype = get_ancestor_phenotype_state_dict(in_R_states, "R")
-    name_of_S, phenotype_S = get_ancestor_phenotype_state_dict(in_S_states, "S")
+    genotype_dict = get_genotype_dict(phylip_in, path_to_ancestor_phylip)
+    name_of_R, phenotype = get_ancestor_phenotype_state_dict(R_in, "R")
+    name_of_S, phenotype_S = get_ancestor_phenotype_state_dict(S_in, "S")
     phenotype.update(phenotype_S)
-    ancestor_phenotype = get_ancestor_phenotype(tree, genotype, phenotype)
-    name_of_ancestral_S = name_of_S + ancestor_phenotype['S']
-    name_of_ancestral_R = name_of_R + ancestor_phenotype['R']
-    return name_of_R, name_of_S, name_of_ancestral_S, name_of_ancestral_R, genotype
+    ancestor_phenotype = get_ancestor_phenotype(tree, genotype_dict, phenotype)
+    name_of_all_S = name_of_S + ancestor_phenotype['S']
+    name_of_all_R = name_of_R + ancestor_phenotype['R']
+    return name_of_R, name_of_S, name_of_all_S, name_of_all_R
