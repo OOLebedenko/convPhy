@@ -9,7 +9,7 @@ parser.add_argument("-i", "--input", required=True, help="path to dir with all i
 parser.add_argument("-o", "--out_dir", default="./output_phyc/", help="path to dir_output")
 parser.add_argument("-geno", "--genotype_prediction", default=False, type=bool)
 parser.add_argument("-pheno", "--phenotype_prediction", default=False, type=bool)
-parser.add_argument("-conphy", default=False, type=bool)
+parser.add_argument("-convphy", default=False, type=bool)
 parser.add_argument("-p_value", default=False, type=bool)
 
 args = parser.parse_args()
@@ -46,7 +46,7 @@ ancestor_R_phenotype = read_file_by_line(path_to_ancestor_R_phenotype)
 genotype_dict = get_genotype_dict(phylip_in, path_to_ancestor_phylip)
 
 # run convPhy
-if not args.conphy:
+if not args.convphy:
     run_phyc(out_dir, name_of_R, name_of_S, ancestor_S_phenotype,
              ancestor_R_phenotype, info_pos, genotype_dict)
 
@@ -55,7 +55,6 @@ R_S = read_file_by_line(path_to_R_S, split_by_any_space_separater=True)
 
 # run permutation test
 if not args.p_value:
-    out_dir = os.path.join(args.out_dir, "p_value")
     run_p_value(out_dir, R_S, info_pos)
 
 # annotation SNPs
