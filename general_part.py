@@ -12,9 +12,10 @@ parser.add_argument("-geno", "--genotype_prediction", default=False, type=bool)
 parser.add_argument("-pheno", "--phenotype_prediction", default=False, type=bool)
 parser.add_argument("-convphy", default=False, type=bool)
 parser.add_argument("-p_value", default=False, type=bool)
-parser.add_argument("-neg", "--negative_phenotype", type=str)
-parser.add_argument("-pos", "--positive_phenotype", type=str)
+parser.add_argument("-neg", "--negative_phenotype", default="S_states.txt", type=str, help="specify name of a file with a list of samples with negative phenotype")
+parser.add_argument("-pos", "--positive_phenotype", default="R_states.txt", type=str, help="specify name of a file with a list of samples with positive phenotype")
 #parser.add_argument("-ref", default=False, type=str, help="path to reference genbank file to make an annotation of variants" )
+
 
 args = parser.parse_args()
 #print (args)
@@ -24,15 +25,8 @@ info_pos = os.path.join(run_dir, "info_pos.txt")
 SNPs_in = os.path.join(run_dir, 'SNPs.txt')
 phylip_in = os.path.join(run_dir, 'farhat.phy')
 raxml_in = os.path.join(run_dir, "raxml_tree.nh")
-
-if args.negative_phenotype:
-	S_in = os.path.join(run_dir, args.negative_phenotype)
-else:
-	S_in = os.path.join(run_dir, "S_states.txt")
-if args.positive_phenotype:
-	R_in = os.path.join(run_dir, args.positive_phenotype)
-else:
-	R_in = os.path.join(run_dir, "R_states.txt")
+S_in = os.path.join(run_dir, args.negative_phenotype)
+R_in = os.path.join(run_dir, args.positive_phenotype)
 
 # check input files existance
 for filepath in [info_pos,SNPs_in,phylip_in, raxml_in, R_in,S_in]: 
