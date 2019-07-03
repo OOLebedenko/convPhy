@@ -19,7 +19,6 @@ def annotate_snp(snps_path, path_to_snps_out_csv):
         position = line.split("\t")[1]
         alt = line.split("\t")[2]
         ref = line.split("\t")[3]
-
         variant_info = annotate(gb_record, ref, position, alt)
         temp = pd.DataFrame([variant_info])
         annotated_snps = pd.concat([annotated_snps, temp])
@@ -59,19 +58,11 @@ def alt_complement(alt):
 
 
 def codons_def(seq, pos, start, end, alt, strand):
-    standard_table = Bio.Data.CodonTable.standard_dna_table
-    all = standard_table.forward_table
-    all['TAA'] = 'Stop'
-    all['TGA'] = 'Stop'
-    all['TAG'] = 'Stop'
-    all['ATG'] = 'M'
-    # try:
+
     if strand == 1:
         if (pos - start) % 3 == 0:
             codon1 = str(seq[pos - start:pos - start + 3])
-            # print (pos-start)%3, codon1,seq, pos-start, start-end, pos,'[', start,end,']', alt, strand
             codon2 = alt + codon1[1] + codon1[2]
-        # print gen[i][0], gen[i][3], codon1+"/"+codon2+"["+codon21+"]",quality,dp
         elif (pos - start) % 3 == 1:
             codon1 = str(seq[pos - start - 1:pos - start + 2])
 
@@ -80,10 +71,8 @@ def codons_def(seq, pos, start, end, alt, strand):
             except:
                 codon2 = codon1[0] + alt
                 print(pos - start) % 3, codon1, seq, pos, pos - start, start - end, '[', start, end, ']', alt, strand
-            # print gen[i][0], gen[i][3], codon1+"/"+codon2+"["+codon21+"]",quality,dp
         elif (pos - start) % 3 == 2:
             codon1 = str(seq[pos - start - 2:pos - start + 1])
-            # print (pos-start)%3,codon1,seq, pos, pos-start, start-end,'[',start,end,']', alt, strand
             codon2 = codon1[0] + codon1[1] + alt
     elif strand == -1:
         var1 = alt_complement(alt)
@@ -92,91 +81,90 @@ def codons_def(seq, pos, start, end, alt, strand):
         codon_no = int(round((end - pos - 1) / 3 + 0.5))
         if (end - pos - 1) % 3 == 0:
             codon1 = str(rev_seq[end - pos - 1:end - pos + 2])
-            # print codon1,seq, pos, end-pos, start-end,'[',start,end,']', alt, strand
             codon2 = var1 + str(rev_seq[end - pos]) + str(rev_seq[end - pos + 1])
         elif (end - pos - 1) % 3 == 1:
             codon1 = str(rev_seq[end - pos - 2:end - pos + 1])
-            # print codon1,seq, pos, end-pos, start-end,'[',start,end,']', alt, strand
             codon2 = str(rev_seq[end - pos - 2]) + var1 + str(rev_seq[end - pos])
         elif (end - pos - 1) % 3 == 2:
             codon1 = str(rev_seq[end - pos - 3:end - pos])
-            # print codon1,seq, pos, end-pos, start-end,'[',start,end,']',alt, strand
             codon2 = str(rev_seq[end - pos - 3]) + str(rev_seq[end - pos - 2]) + var1
-    # except:
-    #	codon1,codon2='unk','unk'
-    # print end-pos, codon_no, rev_seq[end-pos-5:end-pos-1],rev_seq[end-pos-1],rev_seq[end-pos:end-pos+5], codon_no,codon1, all[codon1], acid[codon_no-1], all[codon1] == acid[codon_no-1]
-    # print 'NEW AMIN = ' + all[codon2], codon2
     return codon1, codon2
 
 
 def annotate(gb_record, ref, position, alt):
-    # position=position-1
     variant_info = {}
-    #	columns = ['snp_id', 'sample_number', 'position', 'ref', 'alt', 'codon', 'codon_number', 'amin_acid', 'effect', 'quality', 'DP', 'intergenic', 'VDB', 'AF1', 'AC1', 'DP4', 'MQ', 'FQ', 'PV4', 'GT', 'PL', 'GQ']
-    #	for j in columns:
-    #		variant_info[j]='NULL'
-    second_method = 0
     flag = 0
     pos = int(position) - 1
     variant_info['position'] = position
     variant_info['ref'] = ref
     variant_info['alt'] = alt
-    for ind, feature in enumerate(gb_record.features):
+    for feature in gb_record.features:
         start = feature.location.nofuzzy_start
         end = feature.location.nofuzzy_end
-        strand = feature.location.strand
-        keys = feature.qualifiers.keys()
         if start <= pos and pos <= end:
-            if feature.type != 'source' and feature.type != 'gene':
-                # print gene_info
-                flag = 1
-                sliced_sequense = gb_record.seq[start:end]
-                second_check = sliced_sequense[pos - start:pos - start + len(ref)] == ref
-                codon_number = int(round((pos - start) / 3 + 0.5))
-                pos_in_gene = pos - start
-                for key in keys:
-                    if key == 'locus_tag':
-                        locus_tag = feature.qualifiers[key][0]
-                        variant_info['locus_tag'] = locus_tag
-                    elif key == 'gene':
-                        gene = feature.qualifiers[key][0].replace("'", "")
-                        variant_info['gene'] = gene
-                    elif key == 'db_xref':
-                        for j in feature.qualifiers[key]:
-                            if j.split(':')[0] == 'GI':
-                                GI = j.split(':')[1]
-                            elif j.split(':')[0] == 'GeneID':
-                                GeneID = j.split(':')[1]
-                # else:
-                #	variant_info['gene']= None
-                if second_check:
-                    second_method = 1
-                    if len(alt) == 1 and len(ref) == 1:
-                        codon1, codon2 = codons_def(sliced_sequense, pos, start, end, alt, strand)
-                        eff, acid = effect(codon1, codon2)
+
+            feature_keys = feature.qualifiers.keys()
+            strand = feature.location.strand
+
+            if feature.type != 'source' and feature.type != 'gene': # source ase used only in first feature line in genbank file for H37Rv
+                if feature.type == 'CDS':
+                    flag = 1 # flag = 0 in two cases First, if not gene and second not in pos (one flag for two similar cases)
+                    feature_ref_sequence = gb_record.seq[start:end]
+                    check_constant_reference = feature_ref_sequence[pos - start:pos - start + len(ref)] == ref
+                    codon_number = int(round((pos - start) / 3 + 0.5))
+                    pos_in_gene = pos - start
+
+                    if check_constant_reference:
+                        for key in feature_keys:
+                            if key == 'locus_tag':
+                                locus_tag = feature.qualifiers[key][0]
+                                variant_info['locus_tag'] = locus_tag
+                            elif key == 'gene':
+                                gene = feature.qualifiers[key][0].replace("'", "")
+                                variant_info['gene'] = gene
+
+                        if len(alt) == 1 and len(ref) == 1:
+                            codon1, codon2 = codons_def(feature_ref_sequence, pos, start, end, alt, strand)
+                            eff, acid = effect(codon1, codon2)
+                        else:
+                            codon1, codon2 = ('.', '.')
+                            eff, acid = ('.', '.')
+                        if strand == -1:
+                            codon_number = int(round((end - pos - 1) / 3 + 0.5))
+                            pos_in_gene = end - pos - 1
+                        variant_info['codon_number'] = codon_number
+                        variant_info['pos_in_gene'] = pos_in_gene
+                        variant_info['codon'] = str(codon1) + "/" + str(codon2)
+                        variant_info['effect'] = eff
+                        variant_info['amin_acid'] = acid
+                        variant_info.update({'ref': ref, 'alt': alt, 'position': position})
+                        return variant_info
                     else:
-                        codon1, codon2 = ('.', '.')
-                        eff, acid = ('.', '.')
-                    if strand == -1:
-                        codon_number = int(round((end - pos - 1) / 3 + 0.5))
-                        pos_in_gene = end - pos - 1
-                    variant_info['codon_number'] = codon_number
-                    variant_info['pos_in_gene'] = pos_in_gene
-                    variant_info['codon'] = str(codon1) + "/" + str(codon2)
-                    variant_info['effect'] = eff
-                    variant_info['amin_acid'] = acid
-                    variant_info.update({'ref': ref, 'alt': alt, 'position': position})
-                    return variant_info
+                        replaced_ref = 'Nucleotide position {pos} in the genome sequence has been corrected {ref}:{new_ref}'.\
+                                        format(pos=pos, ref=ref, new_ref=feature_ref_sequence[pos - start:pos - start + len(ref)])
+                        return replaced_ref, ref, position, alt, feature_ref_sequence[pos - start:pos - start + len(ref)]
                 else:
-                    return 'Something goes wrong', ref, position, alt, sliced_sequense[
-                                                                       pos - start:pos - start + len(ref)]
+                    return "{feature_type}: RNA or exactly unknown about transation this sequence type".format(feature_type=feature.type), ref, position, alt
         if start >= pos:
             break
     if flag == 0:
+        print(feature)
         return {'ref': ref, 'alt': alt, 'position': position, 'effect': 'intergenic'}
 
-# if __name__ == '__main__':
-# 	path_to_genbank="/home/olebedenko/mtb_ref/sequence.gb"
-# 	gb_record = SeqIO.read(open(path_to_genbank,"r"), "genbank")
-# 	print annotate(gb_record, "C",2155168,"G")
+if __name__ == '__main__':
+    # path_to_genbank="/home/olebedenko/mtb_ref/sequence.gb"
+    # gb_record = SeqIO.read(open(path_to_genbank,"r"), "genbank")\
 
+    print annotate(gb_record, "A",467,"G")
+    # standard_table = Bio.Data.CodonTable.standard_dna_table
+    # all = standard_table.forward_table
+    # test = []
+    # for ind, feature in enumerate(gb_record.features):
+    #         if 0 < ind:
+    #             start = feature.location.nofuzzy_start
+    #             end = feature.location.nofuzzy_end
+    #             strand = feature.location.strand
+    #             feature_keys = feature.qualifiers.keys()
+    #             test.append(feature.type)
+
+    # print(set(test))
