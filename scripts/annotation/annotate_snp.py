@@ -6,11 +6,9 @@ from Bio import SeqIO
 import Bio.Data.CodonTable
 from Bio import SeqIO
 
-path_to_genbank = "/home/olebedenko/mtb_ref/sequence.gb"
-gb_record = SeqIO.read(open(path_to_genbank, "r"), "genbank")
 
-
-def annotate_snp(snps_path, path_to_snps_out_csv):
+def annotate_snp(snps_path, path_to_snps_out_csv, path_to_genbank):
+    gb_record = SeqIO.read(open(path_to_genbank, "r"), "genbank")
     snps = open(snps_path, "r")
     snps_dir = snps_path.rsplit("/", 1)[0]
     annotated_snps = pd.DataFrame()
@@ -140,10 +138,3 @@ def annotate(gb_record, ref, position, alt):
         else:
             variant_info.update({'effect': 'intergenic'})
             return variant_info
-
-if __name__ == '__main__':
-
-    print annotate(gb_record, "A",1473246,"G") #,,,,,G,S/S,TCA/TCG,467.0,Syn,rrs,Rvnr01,1400.0,1473246,A
-    print annotate(gb_record, "C",2155168,"G") #,,,,,G,S/T,AGC/ACC,315.0,Nonsyn,katG,Rv1908c,943.0,2155168,C
-    print annotate(gb_record, "T", 2167489, "C" ) #,,,,,C,,,,intergenic,,,,2167489,T
-    print annotate(gb_record, "A", 2177654, "C" ) #Something goes wrong,A,2177654,C,C,,,,,,,,,,
