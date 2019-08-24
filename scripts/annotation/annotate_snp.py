@@ -1,8 +1,4 @@
-import os
 import pandas as pd
-from collections import defaultdict
-from Bio.SeqFeature import FeatureLocation
-from Bio import SeqIO
 import Bio.Data.CodonTable
 from Bio import SeqIO
 
@@ -10,7 +6,6 @@ from Bio import SeqIO
 def annotate_snp(snps_path, path_to_snps_out_csv, path_to_genbank):
     gb_record = SeqIO.read(open(path_to_genbank, "r"), "genbank")
     snps = open(snps_path, "r")
-    snps_dir = snps_path.rsplit("/", 1)[0]
     annotated_snps = pd.DataFrame()
 
     for ind, line in enumerate(snps):
@@ -68,17 +63,16 @@ def codons_def(seq, pos, start, end, alt, strand):
                 codon2 = codon1[0] + alt + codon1[2]
             except:
                 codon2 = codon1[0] + alt
-                print(pos - start) % 3, codon1, seq, pos, pos - start, start - end, '[', start, end, ']', alt, strand
+
         elif (pos - start) % 3 == 2:
             codon1 = str(seq[pos - start - 2:pos - start + 1])
             codon2 = codon1[0] + codon1[1] + alt
         codon_number = int(round((pos - start) / 3 + 0.5))
         pos_in_gene = pos - start
+
     elif strand == -1:
         var1 = alt_complement(alt)
         rev_seq = seq.reverse_complement()
-        acid = rev_seq.translate(table=11, to_stop=True)
-        codon_no = int(round((end - pos - 1) / 3 + 0.5))
         if (end - pos - 1) % 3 == 0:
             codon1 = str(rev_seq[end - pos - 1:end - pos + 2])
             codon2 = var1 + str(rev_seq[end - pos]) + str(rev_seq[end - pos + 1])
@@ -108,10 +102,10 @@ def annotate(gb_record, ref, position, alt):
     for feature in gb_record.features:
         start = feature.location.nofuzzy_start
         end = feature.location.nofuzzy_end
-        feature_gb_record_sequence = gb_record.seq[start:end]
-        ref_gb = feature_gb_record_sequence[pos - start:pos - start + len(ref)]
         if pos > end:
             continue
+        feature_gb_record_sequence = gb_record.seq[start:end]
+        ref_gb = feature_gb_record_sequence[pos - start:pos - start + len(ref)]
         strand = feature.location.strand
         locus_tag = feature.qualifiers.get('locus_tag')
         gene = feature.qualifiers.get('gene')
