@@ -12,7 +12,7 @@ parser.add_argument("-geno", "--genotype_prediction", default=False, type=bool)
 parser.add_argument("-pheno", "--phenotype_prediction", default=False, type=bool)
 parser.add_argument("-convphy", default=False, type=bool)
 parser.add_argument("-p_value", default=False, type=bool)
-parser.add_argument("-path_to_genbank", type=str)
+parser.add_argument("-path_to_genbank", type=str, required=True)
 
 args = parser.parse_args()
 
@@ -59,6 +59,6 @@ if not args.p_value:
     run_p_value(out_dir, path_to_R_S)
 
 # annotation SNPs
-snps_path = os.path.join(out_dir, "p_value", "p_value.txt")
+snps_path = os.path.join(out_dir, "p_value", "p_value.csv")
 path_to_snps_out_csv = os.path.join(out_dir, "p_value", "annotated_snps.csv")
 annotate_snp(snps_path, path_to_snps_out_csv, args.path_to_genbank)

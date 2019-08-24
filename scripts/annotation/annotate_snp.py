@@ -1,18 +1,19 @@
 import pandas as pd
 import Bio.Data.CodonTable
 from Bio import SeqIO
+from tqdm import tqdm
 
 
 def annotate_snp(snps_path, path_to_snps_out_csv, path_to_genbank):
     gb_record = SeqIO.read(open(path_to_genbank, "r"), "genbank")
-    snps = open(snps_path, "r")
+    snps = pd.read_csv(snps_path)
+    positions = snps['pos']
+    refs = snps['ref']    
+    alts = snps['alt']
     annotated_snps = pd.DataFrame()
 
-    for ind, line in enumerate(snps):
-        position = line.split("\t")[1]
-        alt = line.split("\t")[2]
-        ref = line.split("\t")[3]
-        variant_info = annotate(gb_record, ref, position, alt)
+    for ref, pos, alt in tqdm(zip(refs, positions, alts)):
+        variant_info = annotate(gb_record, ref, pos, alt)
         temp = pd.DataFrame([variant_info])
         annotated_snps = pd.concat([annotated_snps, temp])
     annotated_snps.to_csv(path_to_snps_out_csv, index=False)
@@ -90,9 +91,9 @@ def get_cds_variant_info(sequence, pos, start, end, alt, strand):
     codon1, codon2, codon_number, pos_in_gene = codons_def(sequence, pos, start, end, alt, strand)
     eff, acid = effect(codon1, codon2)
     codon = str(codon1) + "/" + str(codon2)
-    codon_info = {'codon_number' : codon_number, \
+    codon_info = {'codon_number' : int(codon_number), \
                          'pos_in_gene': pos_in_gene, 'codon': codon, 'effect': eff, \
-                         'amin_acid': acid, 'alt': alt}
+                         'amino_acid': acid, 'alt': alt}
     return codon_info
 
 
@@ -108,7 +109,9 @@ def annotate(gb_record, ref, position, alt):
         ref_gb = feature_gb_record_sequence[pos - start:pos - start + len(ref)]
         strand = feature.location.strand
         locus_tag = feature.qualifiers.get('locus_tag')
-        gene = feature.qualifiers.get('gene')
+        locus_tag = locus_tag[0] if locus_tag else None
+        gene = feature.qualifiers.get('gene') 
+        gene = gene[0] if gene else None
         feature_type = feature.type
         if start <= pos:
             if feature_type  == 'source':
@@ -126,7 +129,7 @@ def annotate(gb_record, ref, position, alt):
                 variant_info.update(codon_info)
                 return variant_info
             else: 
-                variant_info.update({"type" : "{feature_type}: RNA or exactly unknown about transation this sequence type".\
+                variant_info.update({"type" : "{feature_type}: RNA or exactly unknown about translation this sequence type".\
                                     format(feature_type=feature_type ), 'locus_tag': locus_tag, 'gene': gene})                
                 return variant_info
         else:
