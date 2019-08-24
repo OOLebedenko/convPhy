@@ -102,7 +102,7 @@ if __name__ == '__main__':
 	parser = argparse.ArgumentParser(description='make input files for convPhy')
 	parser.add_argument("-vcf", "--path-to-directory-with-vcf-files", required=True, help="path to dir with vcf files")
 	parser.add_argument("-outgroup", "--path-to-outgroup", required=True, help="path to outgroup")
-	parser.add_argument("-out-phy", "--name-phylip-file", default="farhat.phy", help="path to outg phylip")
+	parser.add_argument("-out-phy", "--name-phylip-file", default="convphy.phy", help="path to outg phylip")
 	parser.add_argument("-o", "--path_to_out_directory", default="input", help="path to out directory")
 
 	args = parser.parse_args()

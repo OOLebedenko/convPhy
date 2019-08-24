@@ -20,7 +20,7 @@ args = parser.parse_args()
 run_dir = os.path.join(os.path.abspath(args.input))
 info_pos = os.path.join(run_dir, "info_pos.txt")
 SNPs_in = os.path.join(run_dir, 'SNPs.txt')
-phylip_in = os.path.join(run_dir, 'farhat.phy')
+phylip_in = os.path.join(run_dir, 'convphy.phy')
 raxml_in = os.path.join(run_dir, "raxml_tree.nh")
 R_in = os.path.join(run_dir, 'R_states')
 S_in = os.path.join(run_dir, 'S_states')
@@ -58,7 +58,7 @@ path_to_R_S = os.path.join(out_dir, "phyc", 'pos.txt')
 if not args.p_value:
     run_p_value(out_dir, path_to_R_S)
 
-# # annotation SNPs
-# snps_path = os.path.join(out_dir, "p_value", "p_value.txt")
-# path_to_snps_out_csv = os.path.join(out_dir, "p_value", "annotated_snps.csv")
-# annotate_snp(snps_path, path_to_snps_out_csv, args.path_to_genbank)
+# annotation SNPs
+snps_path = os.path.join(out_dir, "p_value", "p_value.txt")
+path_to_snps_out_csv = os.path.join(out_dir, "p_value", "annotated_snps.csv")
+annotate_snp(snps_path, path_to_snps_out_csv, args.path_to_genbank)
