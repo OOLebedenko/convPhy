@@ -53,13 +53,12 @@ if not args.convphy:
              ancestor_R_phenotype, info_pos, genotype_dict)
 
 path_to_R_S = os.path.join(out_dir, "phyc", 'pos.txt')
-R_S = read_file_by_line(path_to_R_S, split_by_any_space_separater=True)
 
 # run permutation test
 if not args.p_value:
-    run_p_value(out_dir, R_S, info_pos)
+    run_p_value(out_dir, path_to_R_S)
 
-# annotation SNPs
-snps_path = os.path.join(out_dir, "p_value", "p_value.txt")
-path_to_snps_out_csv = os.path.join(out_dir, "p_value", "annotated_snps.csv")
-annotate_snp(snps_path, path_to_snps_out_csv, args.path_to_genbank)
+# # annotation SNPs
+# snps_path = os.path.join(out_dir, "p_value", "p_value.txt")
+# path_to_snps_out_csv = os.path.join(out_dir, "p_value", "annotated_snps.csv")
+# annotate_snp(snps_path, path_to_snps_out_csv, args.path_to_genbank)

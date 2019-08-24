@@ -1,5 +1,6 @@
 import subprocess
 import os
+import pandas as pd
 from scripts.core.phenotype_prediction import get_phenotype_all_nodes
 from scripts.core.phyc import phyc
 from scripts.core.p_value import get_p_value
@@ -38,19 +39,16 @@ def run_phenotype_prediction(out_dir, phylip_in, path_to_anc_phy, R_in, S_in):
 def run_phyc(out_dir, name_of_R, name_of_S, names_of_ancestral_S,
              names_of_ancestral_R, info_pos, genotype_dict):
     raxml_in = os.path.join(out_dir, "raxml", "RAxML_nodeLabelledRootedTree.nh")
-    out_dir_phyc = os.path.join(out_dir, "phyc")
-    resistant_branch = open(os.path.join(out_dir_phyc, './pos.txt'), 'w')
-    os.makedirs(out_dir_phyc, exist_ok=True)
-    os.chdir(out_dir_phyc)
+    os.makedirs(os.path.join(out_dir, "phyc"), exist_ok=True)
     R_S = phyc(name_of_R, name_of_S, names_of_ancestral_S,
                names_of_ancestral_R, info_pos, raxml_in, genotype_dict)
-    resistant_branch.writelines(R_S)
+    R_S.to_csv( os.path.join(out_dir, "phyc", 'pos.csv'), index=False)
 
+def run_p_value(out_dir, path_to_R_S):
 
-def run_p_value(out_dir, R_S, info_pos):
+    R_S = pd.read_csv(os.path.join(out_dir, "phyc", 'pos.csv'))
     out_dir_p_value = os.path.join(out_dir, "p_value")
     os.makedirs(out_dir_p_value, exist_ok=True)
-    p_value = os.path.join(out_dir_p_value, './p_value.txt')
-    p_val = get_p_value(R_S, info_pos)
-    with open(p_value, "w") as f_out:
-        f_out.writelines(p_val)
+    p_value_out_csv = os.path.join(out_dir_p_value, 'p_value.csv')
+    p_value = get_p_value(R_S)
+    p_value.to_csv(p_value_out_csv, index=False)
