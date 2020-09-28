@@ -51,7 +51,7 @@ def create_sample_dict(path_to_vcf):
                 if len(alt) == 1 and len(ref) == 1:
                     positions.append(int(pos))
                     alts.append(alt)
-        name = os.path.basename(path_to_vcf).split(".")[0]
+        name = os.path.basename(path_to_vcf).split(".vcf")[0]
         sample_dict[name] = positions, alts
     return sample_dict
 
@@ -65,15 +65,16 @@ def write_phylip(path_to_directory_with_vcf_files, path_to_out_dir, f_out_name, 
     with open(os.path.join(path_to_out_dir, f_out_name), "w") as phylip:
         phylip.write('{number_of_samples} {number_of_snps}\n'.format(number_of_samples=len(vcf_files),
                                                                      number_of_snps=len(alt_pull_all)))
-        for path_to_vcf in tqdm(vcf_files):
+        for path_to_vcf in vcf_files:
             sample_dict = create_sample_dict(path_to_vcf)
-            name = os.path.basename(path_to_vcf).split(".")[0]
+            name = os.path.basename(path_to_vcf).split(".vcf")[0]
             phylip.write(name + " ")
             for position in sorted_position:
-                try:
-                    k = sample_dict[file][0].index(position)
-                    phylip.write(sample_dict[file][1][k])
-                except:
+                sample_alt_positions = sample_dict[name][0]
+                if position in sample_alt_positions:
+                    index = sample_alt_positions.index(position)
+                    phylip.write(sample_dict[name][1][index])
+                else:
                     phylip.write(ref_pull_all[position])
             phylip.write("\n")
 
