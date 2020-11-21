@@ -79,16 +79,16 @@ def write_phylip(path_to_directory_with_vcf_files, path_to_out_dir, f_out_name, 
             phylip.write("\n")
 
 
-def create_snps_file(path_to_directory_with_vcf_files, path_to_out_directory):
-    ref_pull_all, alt_pull_all = add_to_pull_for_multiple_vcf_file(path_to_directory_with_vcf_files)
+def create_snps_file(path_to_directory_with_vcf_files, path_to_out_directory, path_to_outgroup):
+    ref_pull_all, alt_pull_all = add_to_pull_for_multiple_vcf_file(path_to_directory_with_vcf_files, path_to_outgroup)
     snps = [alt_pull_all[i] for i in sorted(alt_pull_all)]
     path_to_out_snps = os.path.join(path_to_out_directory, "SNPs.txt")
     with open(path_to_out_snps, "w") as out_snps:
         out_snps.write("".join(snps))
 
 
-def create_info_pos(path_to_directory_with_vcf_files, path_to_out_directory):
-    ref_pull_all, alt_pull_all = add_to_pull_for_multiple_vcf_file(path_to_directory_with_vcf_files)
+def create_info_pos(path_to_directory_with_vcf_files, path_to_out_directory, path_to_outgroup):
+    ref_pull_all, alt_pull_all = add_to_pull_for_multiple_vcf_file(path_to_directory_with_vcf_files, path_to_outgroup)
     sorted_position = [str(key) for key in sorted(ref_pull_all.keys())]
     snps = [alt_pull_all[i] for i in sorted(alt_pull_all)]
     ref = [ref_pull_all[i] + "\n" for i in sorted(ref_pull_all)]
