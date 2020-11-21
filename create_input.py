@@ -12,5 +12,5 @@ args = parser.parse_args()
 os.makedirs(args.path_to_out_directory, exist_ok=True)
 
 write_phylip(args.path_to_directory_with_vcf_files, args.path_to_out_directory, args.name_phylip_file, args.path_to_outgroup)
-create_snps_file(args.path_to_directory_with_vcf_files, args.path_to_out_directory)
-create_info_pos(args.path_to_directory_with_vcf_files, args.path_to_out_directory)
+create_snps_file(args.path_to_directory_with_vcf_files, args.path_to_out_directory, args.path_to_outgroup)
+create_info_pos(args.path_to_directory_with_vcf_files, args.path_to_out_directory, args.path_to_outgroup)
